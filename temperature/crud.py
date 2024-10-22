@@ -26,7 +26,7 @@ async def update_temperatures(db: AsyncSession) -> dict:
 
     await db.commit()
 
-    return {"detail": " All temperatures are successfully updated"}
+    return {"detail": "All temperatures are successfully updated"}
 
 
 async def get_all_temperatures(

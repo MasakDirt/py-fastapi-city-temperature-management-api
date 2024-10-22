@@ -5,8 +5,8 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from city.models import *
-from temperature.models import *
+from city.models import City
+from temperature.models import Temperature
 
 from database import Base
 
