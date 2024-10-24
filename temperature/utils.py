@@ -11,12 +11,15 @@ WEATHER_URL = (
 )
 
 
-async def get_temperature(city_name: str) -> float:
+async def get_temperature(city_name: str, city_id: int) -> dict:
     async with httpx.AsyncClient() as client:
         response = await client.get(WEATHER_URL + f"&q={city_name}")
 
         if response.status_code == 200:
-            return response.json()["current"]["temp_c"]
+            return {
+                "temp": response.json()["current"]["temp_c"],
+                "id": city_id
+            }
         else:
             raise HTTPException(
                 status_code=response.status_code,

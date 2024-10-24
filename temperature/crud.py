@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 
 from sqlalchemy import select
@@ -14,14 +15,24 @@ from temperature.utils import get_temperature
 async def update_temperatures(db: AsyncSession) -> dict:
     cities = await get_all_cities(db=db)
 
+    gathering = []
+
+    for city in cities:
+        gathering.append(
+            asyncio.create_task(get_temperature(city.name, city.id))
+        )
+
+    results = await asyncio.gather(*gathering)
+
     temperatures = [
         models.Temperature(
             date_time=datetime.datetime.now(),
-            city_id=city.id,
-            temperature=await get_temperature(city.name)
+            city_id=res["id"],
+            temperature=res["temp"]
         )
-        for city in cities
+        for res in results
     ]
+
     db.add_all(temperatures)
 
     await db.commit()
